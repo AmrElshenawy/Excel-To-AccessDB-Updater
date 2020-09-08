@@ -16,7 +16,7 @@ namespace Excel_To_Access_Data_Transfer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new DataTransferer());
         }
     }
 }

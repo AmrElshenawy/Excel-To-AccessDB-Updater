@@ -5,6 +5,12 @@ VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Excel To Access Data Transfer", "Excel To Access Data Transfer\Excel To Access Data Transfer.csproj", "{3D2B3D0F-EB3E-4461-8736-D73402A5DD68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelHST", "C:\Users\aelshenawy\source\Workspaces\ExcelHST Add In\ExcelHST\XLHST\ExcelHST.csproj", "{8E459294-05DD-490E-B238-162C1ACB0BB9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLHSTCommon", "C:\Users\aelshenawy\source\Workspaces\ExcelHST Add In\ExcelHST\XLHSTCommon\XLHSTCommon.csproj", "{3E5AF919-A731-44DF-95F0-3C2E44BEAD9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLHSTForms", "C:\Users\aelshenawy\source\Workspaces\ExcelHST Add In\ExcelHST\XLHSTForms\XLHSTForms.csproj", "{F1D2E6D8-2482-45FA-8B92-5639A6BF4C85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +21,18 @@ Global
 		{3D2B3D0F-EB3E-4461-8736-D73402A5DD68}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D2B3D0F-EB3E-4461-8736-D73402A5DD68}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D2B3D0F-EB3E-4461-8736-D73402A5DD68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E459294-05DD-490E-B238-162C1ACB0BB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E459294-05DD-490E-B238-162C1ACB0BB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E459294-05DD-490E-B238-162C1ACB0BB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E459294-05DD-490E-B238-162C1ACB0BB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E5AF919-A731-44DF-95F0-3C2E44BEAD9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E5AF919-A731-44DF-95F0-3C2E44BEAD9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E5AF919-A731-44DF-95F0-3C2E44BEAD9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E5AF919-A731-44DF-95F0-3C2E44BEAD9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1D2E6D8-2482-45FA-8B92-5639A6BF4C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1D2E6D8-2482-45FA-8B92-5639A6BF4C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1D2E6D8-2482-45FA-8B92-5639A6BF4C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1D2E6D8-2482-45FA-8B92-5639A6BF4C85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
