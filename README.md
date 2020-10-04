@@ -1,7 +1,7 @@
 # Excel To Microsoft Access DB Updater
 
-This C# executable custom made application serves the purpose of updating a Microsoft Access Database with specific information for thousands of Excel files.
-Within the DB, there are two columns missing information for thousands of records in the DB. Manually accessing every single Excel file and updating the corresponding field in the DB is a job that would take weeks to finish!
+This C# executable custom made application serves the purpose of updating a Microsoft Access Database with specific information from thousands of Excel files.
+Within the DB, there are two columns missing information for thousands of records in the DB. Manually accessing every single Excel file and updating the corresponding field in the DB is a job that would take weeks to finish, which is simply not feasible in the corporate world!
 
 Within this program, the user selects the Database they wish to update and forms a connection to the DB. Upon confirmation, the user will be displayed with the total number of records to be updated. Once the update is initated by the user, an additional feature runs first which cleans up the targeted directory from any unused files that has no corressponding field in the DB. The removed files from the directory are taken to a differend directory in the scenario that they need to be recovered.
 
