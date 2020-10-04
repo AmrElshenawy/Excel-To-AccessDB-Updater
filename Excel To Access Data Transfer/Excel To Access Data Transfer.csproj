@@ -115,14 +115,6 @@
       <Project>{3e5af919-a731-44df-95f0-3c2e44bead9b}</Project>
       <Name>XLHSTCommon</Name>
     </ProjectReference>
-    <ProjectReference Include="C:\Users\aelshenawy\source\Workspaces\ExcelHST Add In\ExcelHST\XLHSTForms\XLHSTForms.csproj">
-      <Project>{f1d2e6d8-2482-45fa-8b92-5639a6bf4c85}</Project>
-      <Name>XLHSTForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="C:\Users\aelshenawy\source\Workspaces\ExcelHST Add In\ExcelHST\XLHST\ExcelHST.csproj">
-      <Project>{8e459294-05dd-490e-b238-162c1acb0bb9}</Project>
-      <Name>ExcelHST</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
