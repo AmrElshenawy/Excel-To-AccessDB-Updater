@@ -22,34 +22,36 @@ namespace Excel_To_Access_Data_Transfer
 {
     public partial class DataTransferer : Form
     {
-        string newLine = Environment.NewLine;
-        public string accessLocation;
-        public string folderLocation;
-        public string cell;
-        public string fileversion;
-        public string currentPart;
-        public int rows;
-        public int m;
+        string newLine = Environment.NewLine;   //Used to enter a new line
+        public string accessLocation;           //Store connection string for the database      
+        public string folderLocation;           //Store folder address containing files
+        public string fileversion;              //Store read file version
+        public string currentPart;              //Part that current index is referring to in for-loop
+        public int rows;                        //Number of rows in LocalDataTable
+        public int m;                           //Counter for number of files moved
 
-        OleDbConnection dbConnection = new OleDbConnection();
-        OleDbDataAdapter dataAdapter;
-        System.Data.DataTable LocalDataTable = new System.Data.DataTable();
+        OleDbConnection dbConnection = new OleDbConnection();                   //Database connection object
+        OleDbDataAdapter dataAdapter;                                           //Data adapter
+        System.Data.DataTable LocalDataTable = new System.Data.DataTable();     //Initialize new data table
 
         public DataTransferer()
         {
             InitializeComponent();
-            this.Text = "Excel to Access Database Updater";
-            btnConnect.Enabled = false;
-            btnUpdate.Enabled = false;
-            btnExport.Enabled = false;
+            this.Text = "Excel to Access Database Updater";     //Window title
+            btnConnect.Enabled = false;                         //------------------
+            btnUpdate.Enabled = false;                          //  Disable buttons
+            btnExport.Enabled = false;                          //------------------
         }
 
         private void btnLoadDB_Click(object sender, EventArgs e)
         {
-            OpenFileDialog OpenDBDialog = new OpenFileDialog();
-            OpenDBDialog.Title = "Select a GlobaList.mdb Database";
-            OpenDBDialog.Filter = "Access DB Files (*.mdb)|*.mdb|All Files (*.*)|*.*";
-            if(OpenDBDialog.ShowDialog() == DialogResult.OK)
+            OpenFileDialog OpenDBDialog = new OpenFileDialog();                             //Open window to browse database location
+            OpenDBDialog.Title = "Select a GlobaList.mdb Database";                         //Window title
+            OpenDBDialog.Filter = "Access DB Files (*.mdb)|*.mdb|All Files (*.*)|*.*";      //Filter files ending in .mdb or All Files
+            /* Once the user selects a file in the browse window 
+             * the file name will be added to the Textbox for clarity.
+             * Connected button will be enabled after */
+            if (OpenDBDialog.ShowDialog() == DialogResult.OK)
             {
                 string dbFileLocation = OpenDBDialog.FileName;
                 accessLocationTextbox.AppendText(dbFileLocation);
@@ -59,14 +61,17 @@ namespace Excel_To_Access_Data_Transfer
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
+            //OleDB communication strings for connection
             string initialConnection = @"Provider=Microsoft.Jet.OLEDB.4.0;Data Source=";
             accessLocation = initialConnection + accessLocationTextbox.Text;
             folderLocation = @"\\mk-testeng\TestEng\HSTDATA\HST\TESTFILE\MASTERS\CURRENT\";
             dbConnection.ConnectionString = accessLocation;
             dbConnection.Open();
-            dataAdapter = new OleDbDataAdapter("Select * From tblParts", dbConnection);
-            dataAdapter.Fill(LocalDataTable);
+            dataAdapter = new OleDbDataAdapter("Select * From tblParts", dbConnection);     //Select the table "Parts" from Access DB
+            dataAdapter.Fill(LocalDataTable);                                               //Fill the DataTable with data imported from Access DB
             rows = LocalDataTable.Rows.Count;
+
+            //Confirm connection status to user
             if (dbConnection.State.Equals(ConnectionState.Open))
             {
                 resultsOutputTextbox.AppendText("Connected to Database successfully!" + newLine);
@@ -82,7 +87,7 @@ namespace Excel_To_Access_Data_Transfer
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             btnRevert.Enabled = false;
-            backgroundWorker1.RunWorkerAsync();
+            backgroundWorker1.RunWorkerAsync();                         //Initiate a separate thread for perfoming the update and transfer
             backgroundWorker1.WorkerSupportsCancellation = true;
         }
 
@@ -98,18 +103,31 @@ namespace Excel_To_Access_Data_Transfer
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
+            /* 
+             * Select PartFirstTestFileVersion from Parts table based on the PartFile column
+             * Select PartfinalTestFileVersion from Parts table based on the PartFile column
+             */ 
             OleDbCommand updateCommandTTA = new OleDbCommand("UPDATE tblParts SET [PartFirstTestFileVersion] = ? WHERE [PartFile] = ?", dbConnection);
             OleDbCommand updateCommandTTZ = new OleDbCommand("UPDATE tblParts SET [PartFinalTestFileVersion] = ? WHERE [PartFile] = ?", dbConnection);
             DirectoryInfo dir = new DirectoryInfo(folderLocation);
             m = 0;
+
+            /*
+             * Inititate a folder clean up before data transfer
+             */ 
             this.resultsOutputTextbox.Invoke(new MethodInvoker(delegate ()
             {
                 resultsOutputTextbox.AppendText("Running folder cleanup... " + newLine + newLine);
             }));
-            FileInfo[] testfiles = dir.GetFiles("*", SearchOption.TopDirectoryOnly);
+            FileInfo[] testfiles = dir.GetFiles("*", SearchOption.TopDirectoryOnly);                //Grab all files in directory and dump it in array
             for (int x = 0; x < testfiles.Length; x++)
             {
                 bool found = false;
+
+                /*
+                 * For each file in testfiles[], scan through the database and find a matching file.
+                 * If a matching file is found in the Database, turn flag on indicating a match.
+                 */
                 for (int y = 0; y < rows; y++)
                 {
                     if (testfiles[x].ToString().ToUpper() == LocalDataTable.Rows[y].Field<string>(2) + ".TTA" || testfiles[x].ToString().ToUpper() == LocalDataTable.Rows[y].Field<string>(2) + ".TTZ")
@@ -118,6 +136,9 @@ namespace Excel_To_Access_Data_Transfer
                         break;
                     }
                 }
+                /*
+                 * If no match was found, move the file to a pre-set folder containing all unused files.
+                 */
                 if (found == false)
                 {
                     string fileToMove = /*@"G:\Test Eng\Amr Access\TestFiles Cleanup Experiment\CURRENT\"*/ folderLocation + testfiles[x];
@@ -133,7 +154,10 @@ namespace Excel_To_Access_Data_Transfer
                         }));
                     }
                 }
-                if(testfiles.Length - x == 1)
+                /*
+                 * Indicate to user that folder clean-up has been completed.
+                 */
+                if (testfiles.Length - x == 1)
                 {
                     this.resultsOutputTextbox.Invoke(new MethodInvoker(delegate ()
                     {
@@ -180,8 +204,13 @@ namespace Excel_To_Access_Data_Transfer
                     }
                 }*/
                 #endregion
-                if (!File.Exists(folderLocation + currentPart + ".TTA"))
-                {
+
+                /*
+                 * Scan through the Database, if no matching file found in the folder,
+                 * Indicate that the file version in N/A for both TTA and TTZ.
+                 */
+                if (!File.Exists(folderLocation + currentPart + ".TTA"))       
+                {                                                                                                   
                     updateCommandTTA.Parameters.Clear();
                     updateCommandTTA.Parameters.AddWithValue("@PartFirstTestFileVersion", "N/A");
                     updateCommandTTA.Parameters.AddWithValue("@PartFile", currentPart);
@@ -196,6 +225,12 @@ namespace Excel_To_Access_Data_Transfer
                     updateCommandTTZ.ExecuteNonQuery();
                     updateCommandTTZ.Parameters.Clear();
                 }
+
+                /*
+                 * Otherwise, if a file is found in the folder for a matching part in the Database,
+                 * Depending on the file type TTA or TTZ, open the file and read the file version.
+                 * Insert the file version in the apporpiate column for that PartFile.
+                 */
                 for (int j = 0; j < testfiles.Length; j++)
                 {
                     if (testfiles[j].ToString().ToUpper() == (currentPart + ".TTA"))
@@ -227,12 +262,15 @@ namespace Excel_To_Access_Data_Transfer
                         updateCommandTTZ.Parameters.Clear();
                     }
                 }
+
+                //Progress Counter
                 this.totaltextBox.Invoke(new MethodInvoker(delegate ()
                 {
                     totaltextBox.Clear();
                     totaltextBox.AppendText(((i * 2) + 2) + "/" + rows * 2 + " Completed!");
                 }));
-                
+
+                //Indicate that the update has been completed
                 if (rows - i == 1)
                 {
                     this.resultsOutputTextbox.Invoke(new MethodInvoker(delegate ()
@@ -249,9 +287,14 @@ namespace Excel_To_Access_Data_Transfer
         private void btnExport_Click(object sender, EventArgs e)
         {
             DirectoryInfo reportDir = new DirectoryInfo(@"\\mk-testeng\TestEng\HSTDATA\HST\TESTFILE\MASTERS\EADU Exported Database Update Reports");
-            FileInfo[] Reports = reportDir.GetFiles("*.txt", SearchOption.TopDirectoryOnly).OrderBy(f => f.CreationTime).ToArray();
+            FileInfo[] Reports = reportDir.GetFiles("*.txt", SearchOption.TopDirectoryOnly).OrderBy(f => f.CreationTime).ToArray();         //Sort exported reports by date of creation
             string latestReport = string.Empty;
             string subreportName = string.Empty;
+
+            /*
+             * Extract the relevant piece of the report name string to find the ID# of the report
+             * Once the latest ID# has been recognized, increment the report number for the current report instance to be exported.
+             */
             if (Reports.Length != 0)
             {
                 latestReport = Reports[Reports.Length - 1].ToString();
@@ -287,7 +330,14 @@ namespace Excel_To_Access_Data_Transfer
             DirectoryInfo revertDir = new DirectoryInfo(/*@"G:\Test Eng\Amr Access\TestFiles Cleanup Experiment\Unused TestFiles\"*/@"\\mk-testeng\TestEng\HSTDATA\HST\TESTFILE\MASTERS\UNUSED TESTFILES\");
             FileInfo[] revertFiles = revertDir.GetFiles("*", SearchOption.TopDirectoryOnly);
 
+            /*
+             *  In the event that an unused file needs to be moved back to main folder, initiate a folder clean-up revert
+             */
             bool isEmpty = !Directory.EnumerateFiles(/*@"G:\Test Eng\Amr Access\TestFiles Cleanup Experiment\Unused TestFiles\"*/@"\\mk-testeng\TestEng\HSTDATA\HST\TESTFILE\MASTERS\UNUSED TESTFILES\").Any();
+
+            /*
+             * Check if there are any folders to revert
+             */
             if (isEmpty)
             {
                 this.resultsOutputTextbox.Invoke(new MethodInvoker(delegate ()
@@ -303,6 +353,10 @@ namespace Excel_To_Access_Data_Transfer
                     resultsOutputTextbox.AppendText("Reverting folder cleanup..." + newLine);
                 }));
             }
+
+            /*
+             * Grab every single folder in the unused files folder and move it back to the main folder to complete the revert.
+             */
             for (int i = 0; i < revertFiles.Length; i++)
             {
                 string filetoMove =/*@"G:\Test Eng\Amr Access\TestFiles Cleanup Experiment\Unused TestFiles\"*/@"\\mk-testeng\TestEng\HSTDATA\HST\TESTFILE\MASTERS\UNUSED TESTFILES\" + revertFiles[i];
@@ -317,6 +371,8 @@ namespace Excel_To_Access_Data_Transfer
                         resultsOutputTextbox.AppendText((i + 1) + "/" + revertFiles.Length + newLine);
                     }));
                 }
+
+                //Indicate to user that the folder revert has been completed.
                 if (revertFiles.Length - i == 1)
                 {
                     this.resultsOutputTextbox.Invoke(new MethodInvoker(delegate ()
